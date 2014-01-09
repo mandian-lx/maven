@@ -1,8 +1,2 @@
 sources:
-  "apache-maven-3.0.3-src.tar.gz:"	a3d2559a6c25c414aaeb33ca712ef2195ca4da5c
-  "JavadirWorkspaceReader.java:"	d62100d7e2be7b5ca81074b962a26259c8301558
-  "MavenJPackageDepmap.java:"	8487e4930bac4c77334c656d244ba33d86007858
-  "maven-script:"	9829a6eba130e80cdcb7e84b74010ed1223f332e
-  "maven-script-local:"	06cf661b31b55c8e68e47d16b3bc277b2a72f201
-  "maven-script-rpmbuild:"	32940c73bfb51cdb45496dd852c0c298397a170f
-  "repo-metadata.tar.xz:"	8bc33939bdfa78da83c1a3b74cede6a735adca45
+  apache-maven-3.1.1-src.tar.gz: dd03e623eaed59407947773472235147dbec420c
