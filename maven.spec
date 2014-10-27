@@ -185,7 +185,7 @@ sed -i -e s:'-classpath "${M2_HOME}"/boot/plexus-classworlds-\*.jar':'-classpath
 
 mkdir m2home
 (cd m2home
-    tar --delay-directory-restore -xvf ../apache-maven/target/*tar.gz
+    tar -xvf ../apache-maven/target/*tar.gz
     chmod -R +rwX apache-%{name}-%{version}%{?ver_add}
     chmod -x apache-%{name}-%{version}%{?ver_add}/conf/settings.xml
 )
