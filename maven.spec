@@ -1,7 +1,7 @@
 %{?_javapackages_macros:%_javapackages_macros}
 Name:           maven
 Version:        3.1.1
-Release:        13.1%{?dist}
+Release:        13.2%{?dist}
 Summary:        Java project management and project comprehension tool
 
 
