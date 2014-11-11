@@ -1,7 +1,7 @@
 %{?_javapackages_macros:%_javapackages_macros}
 Name:           maven
-Version:        3.2.3
-Release:        1%{?dist}
+Version:        3.1.1
+Release:        13.2%{?dist}
 Summary:        Java project management and project comprehension tool
 
 
@@ -14,13 +14,16 @@ Source2:        mvn.1
 # 2xx for created non-buildable sources
 Source200:      %{name}-script
 
-# Merged upstream (MNG-5696)
-Patch0001:      0001-MNG-5696-Remove-dependency-on-Easymock.patch
-# Merged upstream (MNG-5502)
-Patch0002:      0002-Update-Aether-to-0.9.0.M3.patch
-# Merged upstream (MNG-5534)
-Patch0003:      0003-Update-to-Sisu-0.1.0-and-Guice-3.1.6.patch
-Patch0005:	0005-Use-generics-in-modello-generated-code.patch
+# Patch1XX could be upstreamed probably
+Patch100:       0005-Use-generics-in-modello-generated-code.patch
+Patch101:       0001-Migrate-from-easymock-1-to-easymock-3.patch
+
+# Forwarded upstream (MNG-5502)
+Patch200:       0001-Update-Aether-to-0.9.0.M3.patch
+%if 0%{?fedora}
+%else
+Patch300:       %{name}-ftbfs.patch
+%endif
 
 BuildArch:      noarch
 
@@ -45,6 +48,7 @@ BuildRequires:  apache-resource-bundles
 BuildRequires:  atinject
 BuildRequires:  buildnumber-maven-plugin
 BuildRequires:  cglib
+BuildRequires:  easymock3
 BuildRequires:  google-guice >= 3.0
 BuildRequires:  hamcrest
 BuildRequires:  httpcomponents-core
@@ -72,13 +76,12 @@ BuildRequires:  plexus-interpolation
 BuildRequires:  plexus-sec-dispatcher
 BuildRequires:  plexus-utils >= 3.0.10
 BuildRequires:  sisu-inject >= 1:0
-BuildRequires:	sisu-mojos
 BuildRequires:  sisu-plexus >= 1:0
 BuildRequires:  slf4j
 BuildRequires:  xmlunit
 BuildRequires:  mvn(ch.qos.logback:logback-classic)
 BuildRequires:  mvn(org.mockito:mockito-core)
-BuildRequires:	mvn(org.codehaus.modello:modello-maven-plugin)
+
 # Theoretically Maven might be usable with just JRE, but typical Maven
 # workflow requires full JDK, wso we require it here.
 Requires:       java-devel
@@ -142,15 +145,19 @@ Summary:        API documentation for %{name}
 
 %prep
 %setup -q -n apache-%{name}-%{version}%{?ver_add}
-%patch0001 -p1
-%patch0002 -p1
-%patch0003 -p1
-%patch0005 -p1
+%patch100 -p1
+%patch101 -p1
+%patch200 -p1
+%if 0%{?fedora}
+%else
+%patch300 -p1
+%endif
+
 # not really used during build, but a precaution
 rm maven-ant-tasks-*.jar
 
-# Use Eclipse Sisu plugin
-sed -i s/org.sonatype.plugins/org.eclipse.sisu/ maven-core/pom.xml
+# fix line endings
+sed -i 's:\r::' *.txt
 
 # fix for animal-sniffer (we don't generate 1.5 signatures)
 sed -i 's:check-java-1.5-compat:check-java-1.6-compat:' pom.xml
@@ -164,21 +171,17 @@ sed -i -e s:'-classpath "${M2_HOME}"/boot/plexus-classworlds-\*.jar':'-classpath
 
 # Disable animal-sniffer on RHEL
 # Temporarily disabled for fedora to solve asm & asm4 clashing on classpath
+#if [ %{?rhel} ]; then
 %pom_remove_plugin :animal-sniffer-maven-plugin
-%pom_remove_plugin :maven-enforcer-plugin
-%pom_remove_plugin :apache-rat-plugin
-
-# logback is not really needed by maven in typical use cases, so set
-# its scope to provided
-%pom_xpath_inject "pom:dependency[pom:artifactId='logback-classic']" "<scope>provided</scope>" maven-embedder
+#fi
 
 
 %build
 # Put all JARs in standard location, but create symlinks in Maven lib
 # directory so that Plexus Classworlds can find them.
-%mvn_file ":{*}:jar:" %{name}/@1 %{_datadir}/%{name}/lib/@1
+%mvn_file ":{*}" %{name}/@1 ../%{name}/lib/@1
 
-%mvn_build -- -Dproject.build.sourceEncoding=UTF-8 -e
+%mvn_build -- -Dproject.build.sourceEncoding=UTF-8
 
 mkdir m2home
 (cd m2home
@@ -189,7 +192,7 @@ mkdir m2home
 
 
 %install
-%mvn_install 
+%mvn_install
 
 export M2_HOME=$(pwd)/m2home/apache-maven-%{version}%{?ver_add}
 
