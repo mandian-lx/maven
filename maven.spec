@@ -22,10 +22,6 @@ Patch101:       0001-Migrate-from-easymock-1-to-easymock-3.patch
 Patch200:       0001-Update-Aether-to-0.9.0.M3.patch
 # Forwarded upstream (MNG-5534)
 Patch201: 0001-Update-to-Sisu-0.1.0-and-Guice-3.1.6.patch
-%if 0%{?fedora}
-%else
-Patch300:       %{name}-ftbfs.patch
-%endif
 
 BuildArch:      noarch
 
@@ -151,10 +147,6 @@ Summary:        API documentation for %{name}
 %patch101 -p1
 %patch200 -p1
 %patch201 -p1
-%if 0%{?fedora}
-%else
-%patch300 -p1
-%endif
 
 # not really used during build, but a precaution
 rm maven-ant-tasks-*.jar
