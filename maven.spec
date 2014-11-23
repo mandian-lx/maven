@@ -45,7 +45,7 @@ BuildRequires:  apache-resource-bundles
 BuildRequires:  atinject
 BuildRequires:  buildnumber-maven-plugin
 BuildRequires:  cglib
-BuildRequires:  google-guice >= 3.0
+BuildRequires:  google-guice >= 3.1.6
 BuildRequires:  hamcrest
 BuildRequires:  httpcomponents-core
 BuildRequires:  httpcomponents-client
@@ -272,6 +272,9 @@ ln -sf $(build-classpath plexus/classworlds) \
 
 
 %changelog
+* Wed Nov 13 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.1-14
+- Update to Sisu 0.1.0 and Guice 3.1.6
+
 * Fri Nov  8 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.1-13
 - Add wagon-http-shared4 to plexus.core
 
