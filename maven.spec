@@ -146,6 +146,7 @@ Summary:        API documentation for %{name}
 %patch0002 -p1
 %patch0003 -p1
 %patch0005 -p1
+
 # not really used during build, but a precaution
 rm maven-ant-tasks-*.jar
 
@@ -178,7 +179,7 @@ sed -i -e s:'-classpath "${M2_HOME}"/boot/plexus-classworlds-\*.jar':'-classpath
 # directory so that Plexus Classworlds can find them.
 %mvn_file ":{*}:jar:" %{name}/@1 %{_datadir}/%{name}/lib/@1
 
-%mvn_build -- -Dproject.build.sourceEncoding=UTF-8 -e
+%mvn_build -- -Dproject.build.sourceEncoding=UTF-8
 
 mkdir m2home
 (cd m2home
@@ -254,7 +255,7 @@ ln -sf $(build-classpath plexus/classworlds) \
 
 
 %files -f .mfiles
-%doc LICENSE NOTICE README.txt
+%doc LICENSE NOTICE README.md
 %{_datadir}/%{name}
 %{_bindir}/mvn
 %dir %{_javadir}/%{name}
