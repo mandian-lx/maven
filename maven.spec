@@ -1,9 +1,9 @@
 %{?_javapackages_macros:%_javapackages_macros}
 Name:           maven
-Version:        3.2.3
-Release:        1%{?dist}
+Version:        3.2.5
+Release:        1.1
 Summary:        Java project management and project comprehension tool
-
+Group:		Development/Java
 
 License:        ASL 2.0
 URL:            http://maven.apache.org/
@@ -14,12 +14,6 @@ Source2:        mvn.1
 # 2xx for created non-buildable sources
 Source200:      %{name}-script
 
-# Merged upstream (MNG-5696)
-Patch0001:      0001-MNG-5696-Remove-dependency-on-Easymock.patch
-# Merged upstream (MNG-5502)
-Patch0002:      0002-Update-Aether-to-0.9.0.M3.patch
-# Merged upstream (MNG-5534)
-Patch0003:      0003-Update-to-Sisu-0.1.0-and-Guice-3.1.6.patch
 Patch0005:	0005-Use-generics-in-modello-generated-code.patch
 
 BuildArch:      noarch
@@ -63,6 +57,7 @@ BuildRequires:  maven-site-plugin
 BuildRequires:  maven-surefire-plugin
 BuildRequires:  maven-surefire-provider-junit4
 BuildRequires:  maven-wagon >= 2.5-2
+BuildRequires:	objectweb-asm
 BuildRequires:  plexus-cipher
 BuildRequires:  plexus-classworlds
 BuildRequires:  plexus-containers-component-annotations
@@ -107,6 +102,7 @@ Requires:       httpcomponents-client
 Requires:       httpcomponents-core
 Requires:       jsr-305
 Requires:       maven-wagon
+Requires:	objectweb-asm
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
 Requires:       plexus-containers-component-annotations
@@ -142,9 +138,6 @@ Summary:        API documentation for %{name}
 
 %prep
 %setup -q -n apache-%{name}-%{version}%{?ver_add}
-%patch0001 -p1
-%patch0002 -p1
-%patch0003 -p1
 %patch0005 -p1
 
 # not really used during build, but a precaution
@@ -166,7 +159,6 @@ sed -i -e s:'-classpath "${M2_HOME}"/boot/plexus-classworlds-\*.jar':'-classpath
 # Disable animal-sniffer on RHEL
 # Temporarily disabled for fedora to solve asm & asm4 clashing on classpath
 %pom_remove_plugin :animal-sniffer-maven-plugin
-%pom_remove_plugin :maven-enforcer-plugin
 %pom_remove_plugin :apache-rat-plugin
 
 # logback is not really needed by maven in typical use cases, so set
@@ -251,6 +243,7 @@ ln -sf $(build-classpath plexus/classworlds) \
         maven-wagon/http-shared4 \
         commons-logging \
         commons-codec \
+	objectweb-asm/asm
 )
 
 
