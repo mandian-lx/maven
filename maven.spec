@@ -128,7 +128,7 @@ reporting and documentation from a central piece of information.
 Summary:        Core part of Maven
 # If XMvn is part of the same RPM transaction then it should be
 # installed first to avoid triggering rhbz#1014355.
-OrderWithRequires: xmvn-minimal
+Requires: xmvn-minimal
 
 # Maven upstream uses patched version of SLF4J.  They unpack
 # slf4j-simple-sources.jar, apply non-upstreamable, Maven-specific
