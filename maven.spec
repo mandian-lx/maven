@@ -1,82 +1,79 @@
 %{?_javapackages_macros:%_javapackages_macros}
-Name:           maven
-Version:        3.2.5
-Release:        1.1
-Summary:        Java project management and project comprehension tool
-Group:		Development/Java
+%bcond_without  logback
 
+%global bundled_slf4j_version 1.7.25
+
+Name:           maven
+Epoch:          1
+Version:        3.5.2
+Release:        4%{?dist}.1
+Group:          Development/Java
+Summary:        Java project management and project comprehension tool
 License:        ASL 2.0
 URL:            http://maven.apache.org/
+BuildArch:      noarch
+
 Source0:        http://archive.apache.org/dist/%{name}/%{name}-3/%{version}/source/apache-%{name}-%{version}-src.tar.gz
 Source1:        maven-bash-completion
 Source2:        mvn.1
 
-# 2xx for created non-buildable sources
-Source200:      %{name}-script
-
-Patch0005:	0005-Use-generics-in-modello-generated-code.patch
-
-BuildArch:      noarch
-
-# If XMvn is part of the same RPM transaction then it should be
-# installed first to avoid triggering rhbz#1014355.
-Requires(pre):  xmvn
+Patch1:         0001-Adapt-mvn-script.patch
+# Downstream-specific, avoids dependency on logback
+# Used only when %%without logback is in effect
+Patch2:         0002-Invoke-logback-via-reflection.patch
 
 BuildRequires:  maven-local
-
-BuildRequires:  aether-api >= 1:0
-BuildRequires:  aether-connector-basic >= 1:0
-BuildRequires:  aether-impl >= 1:0
-BuildRequires:  aether-spi >= 1:0
-BuildRequires:  aether-util >= 1:0
-BuildRequires:  aether-transport-wagon >= 1:0
-BuildRequires:  aopalliance
-BuildRequires:  apache-commons-cli
-BuildRequires:  apache-commons-codec
-BuildRequires:  apache-commons-jxpath
-BuildRequires:  apache-commons-logging
-BuildRequires:  apache-resource-bundles
-BuildRequires:  atinject
-BuildRequires:  buildnumber-maven-plugin
-BuildRequires:  cglib
-BuildRequires:  google-guice >= 3.1.6
-BuildRequires:  hamcrest
-BuildRequires:  httpcomponents-core
-BuildRequires:  httpcomponents-client
-BuildRequires:  jsr-305
-BuildRequires:  junit
-BuildRequires:  maven-assembly-plugin
-BuildRequires:  maven-compiler-plugin
-BuildRequires:  maven-install-plugin
-BuildRequires:  maven-jar-plugin
-BuildRequires:  maven-javadoc-plugin
-BuildRequires:  maven-parent
-BuildRequires:  maven-remote-resources-plugin
-BuildRequires:  maven-resources-plugin
-BuildRequires:  maven-site-plugin
-BuildRequires:  maven-surefire-plugin
-BuildRequires:  maven-surefire-provider-junit4
-BuildRequires:  maven-wagon >= 2.5-2
-BuildRequires:	objectweb-asm
-BuildRequires:  plexus-cipher
-BuildRequires:  plexus-classworlds
-BuildRequires:  plexus-containers-component-annotations
-BuildRequires:  plexus-containers-component-metadata >= 1.5.5
-BuildRequires:  plexus-containers-container-default
-BuildRequires:  plexus-interpolation
-BuildRequires:  plexus-sec-dispatcher
-BuildRequires:  plexus-utils >= 3.0.10
-BuildRequires:  sisu-inject >= 1:0
-BuildRequires:	sisu-mojos
-BuildRequires:  sisu-plexus >= 1:0
-BuildRequires:  slf4j
-BuildRequires:  xmlunit
-BuildRequires:  mvn(ch.qos.logback:logback-classic)
+BuildRequires:  mvn(com.google.guava:guava:20.0)
+BuildRequires:  mvn(com.google.inject:guice::no_aop:)
+BuildRequires:  mvn(commons-cli:commons-cli)
+BuildRequires:  mvn(commons-jxpath:commons-jxpath)
+BuildRequires:  mvn(javax.annotation:jsr250-api)
+BuildRequires:  mvn(javax.inject:javax.inject)
+BuildRequires:  mvn(junit:junit)
+BuildRequires:  mvn(org.apache.commons:commons-lang3)
+BuildRequires:  mvn(org.apache.maven:maven-parent:pom:)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-assembly-plugin)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-dependency-plugin)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-api)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-connector-basic)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-impl)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-spi)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-transport-wagon)
+BuildRequires:  mvn(org.apache.maven.resolver:maven-resolver-util)
+BuildRequires:  mvn(org.apache.maven.shared:maven-shared-utils)
+BuildRequires:  mvn(org.apache.maven.wagon:wagon-file)
+BuildRequires:  mvn(org.apache.maven.wagon:wagon-http::shaded:)
+BuildRequires:  mvn(org.apache.maven.wagon:wagon-provider-api)
+BuildRequires:  mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:  mvn(org.codehaus.mojo:build-helper-maven-plugin)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-classworlds)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-annotations)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-component-metadata)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-interpolation)
+BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
+BuildRequires:  mvn(org.eclipse.sisu:org.eclipse.sisu.inject)
+BuildRequires:  mvn(org.eclipse.sisu:org.eclipse.sisu.plexus)
+BuildRequires:  mvn(org.eclipse.sisu:sisu-maven-plugin)
+BuildRequires:  mvn(org.fusesource.jansi:jansi)
 BuildRequires:  mvn(org.mockito:mockito-core)
-BuildRequires:	mvn(org.codehaus.modello:modello-maven-plugin)
+BuildRequires:  mvn(org.slf4j:jcl-over-slf4j)
+BuildRequires:  mvn(org.slf4j:slf4j-api)
+BuildRequires:  mvn(org.slf4j:slf4j-simple)
+BuildRequires:  mvn(org.sonatype.plexus:plexus-cipher)
+BuildRequires:  mvn(org.sonatype.plexus:plexus-sec-dispatcher)
+BuildRequires:  mvn(xmlunit:xmlunit)
+
+BuildRequires:  slf4j-sources = %{bundled_slf4j_version}
+
+%if %{with logback}
+BuildRequires:  mvn(ch.qos.logback:logback-classic)
+%endif
+
+Requires:       %{name}-lib = %{epoch}:%{version}-%{release}
+
 # Theoretically Maven might be usable with just JRE, but typical Maven
-# workflow requires full JDK, wso we require it here.
-Requires:       java-devel
+# workflow requires full JDK, so we recommend it here.
+%{?fedora:Recommends}%{!?fedora:Requires}: java-devel
 
 # XMvn does generate auto-requires, but explicit requires are still
 # needed because some symlinked JARs are not present in Maven POMs or
@@ -84,25 +81,34 @@ Requires:       java-devel
 # by XMvn.  It would be possible to explicitly specify only
 # dependencies which are not generated automatically, but adding
 # everything seems to be easier.
-Requires:       aether-api
-Requires:       aether-connector-basic
-Requires:       aether-impl
-Requires:       aether-spi
-Requires:       aether-transport-wagon
-Requires:       aether-util
 Requires:       aopalliance
 Requires:       apache-commons-cli
 Requires:       apache-commons-codec
+Requires:       apache-commons-io
+Requires:       apache-commons-lang3
 Requires:       apache-commons-logging
 Requires:       atinject
+Requires:       cdi-api
 Requires:       geronimo-annotation
 Requires:       google-guice
-Requires:       guava
+Requires:       guava20
+Requires:       hawtjni-runtime
 Requires:       httpcomponents-client
 Requires:       httpcomponents-core
-Requires:       jsr-305
-Requires:       maven-wagon
-Requires:	objectweb-asm
+Requires:       jansi
+Requires:       jansi-native
+Requires:       jcl-over-slf4j
+Requires:       maven-resolver-api
+Requires:       maven-resolver-connector-basic
+Requires:       maven-resolver-impl
+Requires:       maven-resolver-spi
+Requires:       maven-resolver-transport-wagon
+Requires:       maven-resolver-util
+Requires:       maven-shared-utils
+Requires:       maven-wagon-file
+Requires:       maven-wagon-http
+Requires:       maven-wagon-http-shared
+Requires:       maven-wagon-provider-api
 Requires:       plexus-cipher
 Requires:       plexus-classworlds
 Requires:       plexus-containers-component-annotations
@@ -113,91 +119,108 @@ Requires:       sisu-inject
 Requires:       sisu-plexus
 Requires:       slf4j
 
-# for noarch->arch change
-Obsoletes:      %{name} < 0:%{version}-%{release}
-
-# maven2 bin package no longer exists.
-Obsoletes:      maven2 < 2.2.1-99
-Provides:       maven2 = %{version}-%{release}
-
-# Temporary fix for broken sisu
-Requires:       cdi-api
-BuildRequires:  cdi-api
-
 %description
 Maven is a software project management and comprehension tool. Based on the
 concept of a project object model (POM), Maven can manage a project's build,
 reporting and documentation from a central piece of information.
 
+%package        lib
+Summary:        Core part of Maven
+# If XMvn is part of the same RPM transaction then it should be
+# installed first to avoid triggering rhbz#1014355.
+OrderWithRequires: xmvn-minimal
+
+# Maven upstream uses patched version of SLF4J.  They unpack
+# slf4j-simple-sources.jar, apply non-upstreamable, Maven-specific
+# patch (using a script written in Groovy), compile and package as
+# maven-slf4j-provider.jar, together with Maven-specific additions.
+Provides:       bundled(slf4j) = %{bundled_slf4j_version}
+
+%description    lib
+Core part of Apache Maven that can be used as a library.
+
 %package        javadoc
 Summary:        API documentation for %{name}
-
 
 %description    javadoc
 %{summary}.
 
 %prep
-%setup -q -n apache-%{name}-%{version}%{?ver_add}
-%patch0005 -p1
+%setup -q -n apache-%{name}-%{version}
+
+%patch1 -p1
 
 # not really used during build, but a precaution
-rm maven-ant-tasks-*.jar
+find -name '*.jar' -not -path '*/test/*' -delete
+find -name '*.class' -delete
+find -name '*.bat' -delete
 
-# Use Eclipse Sisu plugin
-sed -i s/org.sonatype.plugins/org.eclipse.sisu/ maven-core/pom.xml
-
-# fix for animal-sniffer (we don't generate 1.5 signatures)
-sed -i 's:check-java-1.5-compat:check-java-1.6-compat:' pom.xml
-
-rm -f apache-maven/src/bin/*.bat
 sed -i 's:\r::' apache-maven/src/conf/settings.xml
 
-# Update shell scripts to use unversioned classworlds
-sed -i -e s:'-classpath "${M2_HOME}"/boot/plexus-classworlds-\*.jar':'-classpath "${M2_HOME}"/boot/plexus-classworlds.jar':g \
-        apache-maven/src/bin/mvn*
+# Downloads dependency licenses from the Internet and aggregates them.
+# We already ship the licenses in their respective packages.
+rm apache-maven/src/main/appended-resources/META-INF/LICENSE.vm
 
-# Disable animal-sniffer on RHEL
-# Temporarily disabled for fedora to solve asm & asm4 clashing on classpath
-%pom_remove_plugin :animal-sniffer-maven-plugin
-%pom_remove_plugin :apache-rat-plugin
+# Disable plugins which are not useful for us
+%pom_remove_plugin -r :animal-sniffer-maven-plugin
+%pom_remove_plugin -r :apache-rat-plugin
+%pom_remove_plugin -r :maven-site-plugin
+%pom_remove_plugin -r :maven-enforcer-plugin
+%pom_remove_plugin -r :buildnumber-maven-plugin
+sed -i "
+/buildNumber=/ {
+  s/=.*/=Red Hat %{version}-%{release}/
+  s/%{dist}$//
+}
+/timestamp=/ d
+" `find -name build.properties`
 
-# logback is not really needed by maven in typical use cases, so set
-# its scope to provided
-%pom_xpath_inject "pom:dependency[pom:artifactId='logback-classic']" "<scope>provided</scope>" maven-embedder
+%mvn_package :apache-maven __noinstall
 
+%if %{without logback}
+%pom_remove_dep -r :logback-classic
+%patch2 -p1
+%endif
+
+%mvn_alias :maven-resolver-provider :maven-aether-provider
 
 %build
-# Put all JARs in standard location, but create symlinks in Maven lib
-# directory so that Plexus Classworlds can find them.
-%mvn_file ":{*}:jar:" %{name}/@1 %{_datadir}/%{name}/lib/@1
-
 %mvn_build -- -Dproject.build.sourceEncoding=UTF-8
 
 mkdir m2home
 (cd m2home
-    tar -xvf ../apache-maven/target/*tar.gz
-    chmod -R +rwX apache-%{name}-%{version}%{?ver_add}
-    chmod -x apache-%{name}-%{version}%{?ver_add}/conf/settings.xml
+    tar --delay-directory-restore -xvf ../apache-maven/target/*tar.gz
 )
 
 
 %install
-%mvn_install 
+%mvn_install
 
 export M2_HOME=$(pwd)/m2home/apache-maven-%{version}%{?ver_add}
 
-install -d -m 755 %{buildroot}%{_datadir}/%{name}/bin
 install -d -m 755 %{buildroot}%{_datadir}/%{name}/conf
-install -d -m 755 %{buildroot}%{_datadir}/%{name}/boot
-install -d -m 755 %{buildroot}%{_datadir}/%{name}/lib/ext
 install -d -m 755 %{buildroot}%{_bindir}
 install -d -m 755 %{buildroot}%{_sysconfdir}/%{name}
 install -d -m 755 %{buildroot}%{_datadir}/bash-completion/completions
 install -d -m 755 %{buildroot}%{_mandir}/man1
 
-install -p -m 755 %{SOURCE200} %{buildroot}%{_bindir}/mvn
+cp -a $M2_HOME/{bin,lib,boot} %{buildroot}%{_datadir}/%{name}/
+xmvn-subst -R %{buildroot} -s %{buildroot}%{_datadir}/%{name}
+
+# Transitive deps of wagon-http, missing because of unshading
+build-jar-repository -s -p %{buildroot}%{_datadir}/%{name}/lib \
+    commons-{codec,logging} httpcomponents/{httpclient,httpcore} maven-wagon/http-shared
+
+# Transitive deps of cdi-api that should have been excluded
+rm %{buildroot}%{_datadir}/%{name}/lib/jboss-interceptors*.jar
+rm %{buildroot}%{_datadir}/%{name}/lib/javax.el-api*.jar
+
+for cmd in mvn mvnDebug mvnyjp; do
+    ln -s %{_datadir}/%{name}/bin/$cmd %{buildroot}%{_bindir}/$cmd
+    echo ".so man1/mvn.1" >%{buildroot}%{_mandir}/man1/$cmd.1
+done
 install -p -m 644 %{SOURCE2} %{buildroot}%{_mandir}/man1
-install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/bash-completion/completions/%{name}
+install -p -m 644 %{SOURCE1} %{buildroot}%{_datadir}/bash-completion/completions/mvn
 mv $M2_HOME/bin/m2.conf %{buildroot}%{_sysconfdir}
 ln -sf %{_sysconfdir}/m2.conf %{buildroot}%{_datadir}/%{name}/bin/m2.conf
 mv $M2_HOME/conf/settings.xml %{buildroot}%{_sysconfdir}/%{name}
@@ -205,66 +228,216 @@ ln -sf %{_sysconfdir}/%{name}/settings.xml %{buildroot}%{_datadir}/%{name}/conf/
 mv $M2_HOME/conf/logging %{buildroot}%{_sysconfdir}/%{name}
 ln -sf %{_sysconfdir}/%{name}/logging %{buildroot}%{_datadir}/%{name}/conf
 
-cp -a $M2_HOME/bin/* %{buildroot}%{_datadir}/%{name}/bin
-
-ln -sf $(build-classpath plexus/classworlds) \
-    %{buildroot}%{_datadir}/%{name}/boot/plexus-classworlds.jar
-
-(cd %{buildroot}%{_datadir}/%{name}/lib
-    build-jar-repository -s -p . \
-        aether/aether-api \
-        aether/aether-connector-basic aether/aether-transport-wagon \
-        aether/aether-impl \
-        aether/aether-spi \
-        aether/aether-util \
-        aopalliance \
-        cdi-api \
-        commons-cli \
-        guava \
-        atinject \
-        geronimo-annotation \
-        jsr-305 \
-        org.eclipse.sisu.inject \
-        org.eclipse.sisu.plexus \
-        plexus/plexus-cipher \
-        plexus/containers-component-annotations \
-        plexus/interpolation \
-        plexus/plexus-sec-dispatcher \
-        plexus/utils \
-        google-guice-no_aop \
-        slf4j/api \
-        slf4j/simple \
-        maven-wagon/file \
-        maven-wagon/http-shaded \
-        maven-wagon/provider-api \
-        \
-        httpcomponents/httpclient \
-        httpcomponents/httpcore \
-        maven-wagon/http-shared4 \
-        commons-logging \
-        commons-codec \
-	objectweb-asm/asm
-)
-
-
-%files -f .mfiles
+%files lib -f .mfiles
 %doc LICENSE NOTICE README.md
 %{_datadir}/%{name}
-%{_bindir}/mvn
 %dir %{_javadir}/%{name}
 %dir %{_sysconfdir}/%{name}
 %dir %{_sysconfdir}/%{name}/logging
 %config(noreplace) %{_sysconfdir}/m2.conf
 %config(noreplace) %{_sysconfdir}/%{name}/settings.xml
 %config(noreplace) %{_sysconfdir}/%{name}/logging/simplelogger.properties
-%{_datadir}/bash-completion/completions/%{name}
-%{_mandir}/man1/mvn.1.gz
+
+%files
+%attr(0755,root,root) %{_bindir}/mvn*
+%{_datadir}/bash-completion
+%{_mandir}/man1/mvn*.1.gz
 
 %files javadoc -f .mfiles-javadoc
 %doc LICENSE NOTICE
 
 
 %changelog
+* Fri Feb 09 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 1:3.5.2-4
+- Escape macros in %%changelog
+
+* Thu Feb 08 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:3.5.2-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Mon Feb 05 2018 Michael Simacek <msimacek@redhat.com> - 1:3.5.2-2
+- Use guava20
+
+* Wed Oct 25 2017 Michael Simacek <msimacek@redhat.com> - 1:3.5.2-1
+- Update to upstream version 3.5.2
+
+* Fri Sep 15 2017 Michael Simacek <msimacek@redhat.com> - 1:3.5.0-7
+- Fix FTBFS after maven-remote-reources-plugin update
+
+* Tue Aug 08 2017 Michael Simacek <msimacek@redhat.com> - 1:3.5.0-6
+- Generate build number based on package release number
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:3.5.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Thu Jun 08 2017 Michael Simacek <msimacek@redhat.com> - 1:3.5.0-4
+- Update logback conditional to replace logback usage with reflection
+
+* Wed Apr 26 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.5.0-3
+- Add apache-commons-codec to plexus.core
+- Resolves: rhbz#1445738
+
+* Wed Apr 19 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.5.0-2
+- Add alias for maven-aether-provider
+
+* Tue Apr 11 2017 Michael Simacek <msimacek@redhat.com> - 1:3.5.0-1
+- Update to upstream version 3.5.0
+
+* Fri Mar  3 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.3.9-9
+- Fix bash-completion directory ownership
+
+* Wed Mar 01 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-8
+- Avoid subshell for build-jar-repository
+
+* Thu Feb 16 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.3.9-7
+- Conditionalize weak dependencies
+
+* Tue Feb 14 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:3.3.9-6
+- Remove BR on maven-javadoc-plugin
+
+* Mon Feb 06 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-5
+- Remove BR on buildnumber-plugin
+
+* Mon Feb 06 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-4
+- Remove buildnumber-plugin from build
+
+* Thu Feb 02 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-3
+- Add conditional for logback
+
+* Thu Feb 02 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-2
+- Remove site-plugin and enforce-plugin from build
+
+* Wed Feb 01 2017 Michael Simacek <msimacek@redhat.com> - 1:3.3.9-1
+- Downgrade to 3.3.9
+
+* Wed Dec 14 2016 Michael Simacek <msimacek@redhat.com> - 3.4.0-0.6.20161118git8ae1a3e
+- Bump slf4j version
+
+* Fri Nov 18 2016 Michael Simacek <msimacek@redhat.com> - 3.4.0-0.5.20161118git8ae1a3e
+- Restore compatibility with maven-polyglot
+
+* Fri Nov 18 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.4.0-0.4.20161118git8ae1a3e
+- Versioned bundled(slf4j) provides
+
+* Fri Nov 18 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.4.0-0.3.20161118git8ae1a3e
+- Update to latest upstream snapshot
+- Source-bundle slf4j-simple
+
+* Mon Aug 15 2016 Michael Simacek <msimacek@redhat.com> - 3.4.0-0.2.20160807git9f2452a
+- Use patched upstream launcher instead of custom script
+
+* Mon Aug  8 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.4.0-0.1.20160807git9f2452a
+- Update to 3.4.0 snapshot
+
+* Fri Jul  1 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.9-6
+- Add missing BR on maven-enforcer-plugin
+
+* Tue Jun 28 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.9-5
+- Add maven-lib subpackage
+
+* Thu Apr  7 2016 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.9-4
+- Force SLF4J SimpleLogger re-initialization
+- Resolves: rhbz#1324832
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 3.3.9-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Mon Nov 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.9-2
+- Fix symlinks: add commons-lang3 and remove geronimo-annotation
+
+* Fri Nov 13 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.9-1
+- Update to upstream version 3.3.9
+
+* Mon Nov  2 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.8-1
+- Update to upstream version 3.3.8
+
+* Fri Jul 10 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.3-3
+- Recommend java-devel instead of requiring it
+
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.3.3-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Thu Apr 23 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.3-1
+- Update to upstream version 3.3.3
+
+* Wed Apr  1 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.1-2
+- Install mvnDebug and mvnyjp in bindir
+- Update manpage
+- Resolves: rhbz#1207850
+
+* Mon Mar 16 2015 Michal Srb <msrb@redhat.com> - 3.3.1-1
+- Add commons-io, commons-lang and jsoup to plexus.core (Resolves: rhbz#1202286)
+
+* Fri Mar 13 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.1-1
+- Update to upstream version 3.3.1
+
+* Thu Mar 12 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.3.0-1
+- Update to upstream version 3.3.0
+
+* Wed Feb 18 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.5-2
+- Add objectweb-asm to plexus.core
+
+* Mon Jan 19 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.5-1
+- Update to upstream version 3.2.5
+
+* Sat Dec  6 2014 Ville Skyttä <ville.skytta@iki.fi> - 3.2.3-4
+- Fix bash completion filename
+
+* Tue Oct 14 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.3-3
+- Remove legacy Obsoletes/Provides for maven2
+
+* Mon Sep 29 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.3-2
+- Update patches
+
+* Fri Aug 22 2014 Michal Srb <msrb@redhat.com> - 3.2.3-1
+- Update to upstream version 3.2.3
+
+* Wed Jun 18 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.2-1
+- Update to upstream version 3.2.2
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.2.1-11
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Thu Jun  5 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-10
+- Fix artifact pattern in %%mvn_file invocation
+
+* Wed Jun  4 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-9
+- Install additional lib symlinks only for JAR files
+
+* Wed Jun  4 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-8
+- Fix dangling symlinks in Maven lib dir
+- Resolves: rhbz#1104396
+
+* Mon Jun  2 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-7
+- Clean up patches
+- Add patch for MNG-5613
+
+* Mon May 26 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-6
+- Remove BuildRequires on maven-surefire-provider-junit4
+
+* Mon Mar 17 2014 Michal Srb <msrb@redhat.com> - 3.2.1-5
+- Add missing BR: modello-maven-plugin
+
+* Fri Mar  7 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-4
+- Set logback dependency scope to provided
+
+* Mon Feb 24 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-3
+- Add patch for MNG-5591
+
+* Thu Feb 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-2
+- Migrate to Wagon subpackages
+
+* Thu Feb 20 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-1
+- Remove BR on plexus-containers-container-default
+
+* Mon Feb 17 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.1-1
+- Update to upstream version 3.2.1
+
+* Tue Feb 11 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.2.0-1
+- Update to upstream version 3.2.0
+
+* Mon Dec 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.1-15
+- Read user and system config files in maven-script
+
 * Wed Nov 13 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.1-14
 - Update to Sisu 0.1.0 and Guice 3.1.6
 
@@ -320,7 +493,7 @@ ln -sf $(build-classpath plexus/classworlds) \
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
 * Tue Jul 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-2
-- Install simplelogger.properties into %{_sysconfdir}
+- Install simplelogger.properties into %%{_sysconfdir}
 
 * Tue Jul 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.1.0-1
 - Update to upstream version 3.1.0
@@ -368,7 +541,7 @@ ln -sf $(build-classpath plexus/classworlds) \
 - Build with xmvn, rely on auto-requires
 
 * Wed Jan 23 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.4-28
-- Move mvn-local and mvn-rpmbuild out of %_bindir
+- Move mvn-local and mvn-rpmbuild out of %%_bindir
 
 * Tue Nov 27 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 3.0.4-27
 - Move some parts to maven-local package
